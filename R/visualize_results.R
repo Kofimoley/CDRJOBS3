@@ -41,6 +41,9 @@ visualize_results <- function(data,
     data <- data[data$year %in% selected_years, ]
   }
 
+  # Scale the job metrics to millions
+  data[[job_metric]] <- data[[job_metric]] / 1e6
+
   # Define theme for all plots
   custom_theme <- theme(
     legend.position = "none",
@@ -66,7 +69,7 @@ visualize_results <- function(data,
       facet_grid(region ~ scenario, scales = "free_y") +
       labs(title = "Cumulative Jobs by Technology",
            x = "Technology",
-           y = job_metric) +
+           y = paste(job_metric, "(Million)")) +
       custom_theme
   } else if (type == "total_year") {
     p <- ggplot(data, aes(x = year, y = .data[[job_metric]], group = interaction(scenario, region))) +
@@ -75,7 +78,7 @@ visualize_results <- function(data,
       facet_grid(region ~ scenario, scales = "free_y") +
       labs(title = "Total Jobs by Year",
            x = "Year",
-           y = job_metric) +
+           y = paste(job_metric, "(Million)")) +
       custom_theme
   }
 
