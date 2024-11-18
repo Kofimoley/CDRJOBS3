@@ -11,7 +11,8 @@ visualize_results(
   selected_scenarios = NULL,
   selected_regions = NULL,
   selected_years = NULL,
-  ncols = 2,
+  ncol = 2,
+  nrow = NULL,
   output_path = getwd()
 )
 }
@@ -28,12 +29,14 @@ visualize_results(
 
 \item{selected_years}{A vector of years to include (for "total_year"), or NULL for all.}
 
-\item{ncols}{The number of columns for sub-panels.}
+\item{ncol}{Number of columns for the facets.}
 
-\item{output_path}{The directory where plots will be saved. Plots are saved by default.}
+\item{nrow}{Number of rows for the facets. If NULL, rows are determined dynamically by ggplot2.}
+
+\item{output_path}{The directory where plots will be saved as PNG files.}
 }
 \description{
-Creates plots for different types of CDR job estimation results.
+Creates faceted plots for CDR job estimation results.
 }
 \examples{
 visualize_results(data = results$Job_total_year, type = "total_year", job_metric = "mean_Jobs")

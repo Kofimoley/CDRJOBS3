@@ -10,6 +10,10 @@
 #' @param output_path Path to save output files.
 #' @param output_type Output format, either "csv" or "list".
 #' @param create_plots Logical, if TRUE, generates plots for the results.
+#' @param job_metric The metric to visualize in plots. One of "mean_Jobs", "min_Jobs", "max_Jobs".
+#' @param ncol Number of columns for the facets in the plots.
+#' @param nrow Number of rows for the facets in the plots.
+#' @param selected_years For "total_year", a vector of years to include, or NULL for all.
 #' @return A list containing the estimated jobs.
 #' @import dplyr rgcam ggplot2
 #' @export
@@ -20,7 +24,11 @@ calculate_cdr_jobs <- function(db_path,
                                region_list = NULL,
                                output_path,
                                output_type = c("csv", "list"),
-                               create_plots = TRUE) {
+                               create_plots = TRUE,
+                               job_metric = "mean_Jobs",
+                               ncol = 2,
+                               nrow = NULL,
+                               selected_years = NULL) {
 
   # Validate output_type
   output_type <- match.arg(output_type, several.ok = TRUE)
@@ -109,9 +117,11 @@ calculate_cdr_jobs <- function(db_path,
     visualize_results(
       data = Job_cum_tech,
       type = "cum_tech",
-      job_metric = "mean_Jobs",
+      job_metric = job_metric,
       selected_scenarios = scenario_list,
       selected_regions = region_list,
+      ncol = ncol,
+      nrow = nrow,
       output_path = output_path
     )
 
@@ -119,9 +129,12 @@ calculate_cdr_jobs <- function(db_path,
     visualize_results(
       data = Job_total_year,
       type = "total_year",
-      job_metric = "mean_Jobs",
+      job_metric = job_metric,
       selected_scenarios = scenario_list,
       selected_regions = region_list,
+      selected_years = selected_years,
+      ncol = ncol,
+      nrow = nrow,
       output_path = output_path
     )
   }
