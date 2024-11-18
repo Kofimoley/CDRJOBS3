@@ -46,7 +46,7 @@ visualize_results <- function(data,
 
   # Ensure data is ordered by year for proper line plotting
   if (type == "total_year") {
-    data <- data %>% arrange(scenario, region, year)
+    data <- dplyr::arrange(data, scenario, region, year)
   }
 
   # Convert year to numeric to ensure proper ordering and continuity in the line plot
@@ -100,4 +100,3 @@ visualize_results <- function(data,
   # Return plot for optional interactive use
   return(p)
 }
-

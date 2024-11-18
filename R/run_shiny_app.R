@@ -3,7 +3,6 @@
 #' Launches a Shiny app to interactively view CDR job estimation results.
 #'
 #' @param results A list of datasets to visualize.
-#' @import shiny
 #' @examples
 #' run_shiny_app(results)
 #' @export
@@ -31,7 +30,7 @@ run_shiny_app <- function(results) {
 
   server <- function(input, output, session) {
     selected_data <- reactive({
-      results[[input$dataset]]
+      as.data.frame(results[[input$dataset]])
     })
 
     output$scenario_ui <- renderUI({
@@ -49,7 +48,7 @@ run_shiny_app <- function(results) {
     })
 
     output$jobPlot <- renderPlot({
-      filtered_data <- selected_data()
+      filtered_data <- as.data.frame(selected_data())
       if (!is.null(input$selected_scenarios)) {
         filtered_data <- filtered_data[filtered_data$scenario %in% input$selected_scenarios, ]
       }
@@ -72,3 +71,4 @@ run_shiny_app <- function(results) {
 
   shinyApp(ui = ui, server = server)
 }
+
