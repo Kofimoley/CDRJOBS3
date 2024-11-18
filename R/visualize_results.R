@@ -78,7 +78,7 @@ visualize_results <- function(data,
       custom_theme
   } else if (type == "total_year") {
     p <- ggplot(data, aes(x = year, y = .data[[job_metric]], group = interaction(scenario, region))) +
-      geom_line(color = "blue") +
+      geom_line(aes(group = interaction(scenario, region)), color = "blue", linewidth = 1) +
       geom_point(color = "blue") +
       facet_grid(region ~ scenario, scales = "free_y") +
       labs(title = "Total Jobs by Year",
