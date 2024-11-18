@@ -6,6 +6,7 @@
 #' @import shiny
 #' @examples
 #' run_shiny_app(results)
+#' @export
 run_shiny_app <- function(results) {
   library(shiny)
   library(ggplot2)
