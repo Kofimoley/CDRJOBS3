@@ -4,7 +4,7 @@
 \alias{run_shiny_app}
 \title{Shiny App for Viewing CDR Job Estimation Results}
 \usage{
-run_shiny_app(results)
+run_shiny_app(output_path)
 }
 \arguments{
 \item{results}{A list of datasets to visualize.}

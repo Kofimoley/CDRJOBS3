@@ -6,16 +6,27 @@
 #' @examples
 #' run_shiny_app(results)
 #' @export
-run_shiny_app <- function(results) {
+run_shiny_app <- function(output_path) {
   library(shiny)
   library(ggplot2)
   library(dplyr)
+
+  # Load the provided CSV files from the user-specified output path
+  # Use the output_path provided by the user to dynamically load CSV files
+  job_cum_total_data <- read.csv(file.path(output_path, "Job_cum_total.csv"))
+  job_total_year_data <- read.csv(file.path(output_path, "Job_total_year.csv"))
+
+  # Create a list of datasets
+  results <- list(
+    Job_cum_total = job_cum_total_data,
+    Job_total_year = job_total_year_data
+  )
 
   ui <- fluidPage(
     titlePanel("CDR Job Estimation Results Viewer"),
     sidebarLayout(
       sidebarPanel(
-        selectInput("dataset", "Select Dataset:", choices = names(results)),
+        selectInput("dataset", "Select Dataset:", choices = if (length(results) > 0) names(results) else "No data available"),
         selectInput("type", "Select Visualization Type:", choices = c("total_year", "cum_tech")),
         selectInput("job_metric", "Select Job Metric:", choices = c("mean_Jobs", "min_Jobs", "max_Jobs")),
         uiOutput("scenario_ui"),
@@ -30,6 +41,16 @@ run_shiny_app <- function(results) {
   )
 
   server <- function(input, output, session) {
+    observe({
+      if (input$dataset == "No data available") {
+        output$jobPlot <- renderPlot({
+          plot.new()
+          text(0.5, 0.5, "No data available", cex = 1.5)
+        })
+        return()
+      }
+    })
+
     selected_data <- reactive({
       req(input$dataset)
       data <- results[[input$dataset]]
