@@ -13,14 +13,22 @@
 #' @return A list containing the estimated jobs.
 #' @import dplyr rgcam ggplot2
 #' @export
-calculate_cdr_jobs <- function(db_path, db_name, dat_file, scenario_list, region_list = NULL, output_path, output_type = c("csv", "list"), create_plots = TRUE) {
-  # Load necessary packages (use @import instead of library calls in the function)
-  # library(dplyr)
-  # library(rgcam)
-  # library(ggplot2)
+calculate_cdr_jobs <- function(db_path,
+                               db_name,
+                               dat_file,
+                               scenario_list,
+                               region_list = NULL,
+                               output_path,
+                               output_type = c("csv", "list"),
+                               create_plots = TRUE) {
 
   # Validate output_type
   output_type <- match.arg(output_type, several.ok = TRUE)
+
+  # Validate output path
+  if (!dir.exists(output_path)) {
+    stop("The specified output_path does not exist.")
+  }
 
   # Define the CDR query directly in the function
   CDR_query <- "<?xml version='1.0'?>
@@ -78,7 +86,7 @@ calculate_cdr_jobs <- function(db_path, db_name, dat_file, scenario_list, region
   Job_cum_tech <- calculate_jobs(joined_data %>% group_by(scenario, region, technology))
   Job_cum_total <- calculate_jobs(joined_data %>% group_by(scenario, region))
 
-  # Output results based on the selected output type
+  # Save CSVs if specified
   if ("csv" %in% output_type) {
     write.csv(Job_total_year, file.path(output_path, "Job_total_year.csv"), row.names = FALSE)
     write.csv(Job_by_tech_year, file.path(output_path, "Job_by_tech_year.csv"), row.names = FALSE)
@@ -93,12 +101,33 @@ calculate_cdr_jobs <- function(db_path, db_name, dat_file, scenario_list, region
     Job_cum_total = Job_cum_total
   )
 
-  if ("list" %in% output_type || length(output_type) == 0) {
-    return(results)
-  }
-
   # Create plots if requested
   if (create_plots) {
-    plot_cdr_jobs(results, output_path)
+    message("Generating and saving visualizations...")
+
+    # Visualize cumulative jobs by technology
+    visualize_results(
+      data = Job_cum_tech,
+      type = "cum_tech",
+      job_metric = "mean_Jobs",
+      selected_scenarios = scenario_list,
+      selected_regions = region_list,
+      output_path = output_path
+    )
+
+    # Visualize total jobs by year
+    visualize_results(
+      data = Job_total_year,
+      type = "total_year",
+      job_metric = "mean_Jobs",
+      selected_scenarios = scenario_list,
+      selected_regions = region_list,
+      output_path = output_path
+    )
+  }
+
+  # Return results as a list if specified
+  if ("list" %in% output_type || length(output_type) == 0) {
+    return(results)
   }
 }
