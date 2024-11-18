@@ -30,6 +30,11 @@ visualize_results <- function(data,
     stop("The specified output_path does not exist.")
   }
 
+  # Ensure the data is a data frame
+  if (!is.data.frame(data)) {
+    stop("The provided data is not a valid data frame.")
+  }
+
   # Filter data based on user selections
   if (!is.null(selected_scenarios)) {
     data <- data[data$scenario %in% selected_scenarios, ]

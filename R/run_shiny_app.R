@@ -9,6 +9,7 @@
 run_shiny_app <- function(results) {
   library(shiny)
   library(ggplot2)
+  library(dplyr)
 
   ui <- fluidPage(
     titlePanel("CDR Job Estimation Results Viewer"),
@@ -30,10 +31,16 @@ run_shiny_app <- function(results) {
 
   server <- function(input, output, session) {
     selected_data <- reactive({
-      as.data.frame(results[[input$dataset]])
+      req(input$dataset)
+      data <- results[[input$dataset]]
+      if (!is.data.frame(data)) {
+        data <- as.data.frame(data)
+      }
+      data
     })
 
     output$scenario_ui <- renderUI({
+      req(selected_data())
       selectInput("selected_scenarios", "Select Scenarios:",
                   choices = unique(selected_data()$scenario),
                   selected = unique(selected_data()$scenario),
@@ -41,6 +48,7 @@ run_shiny_app <- function(results) {
     })
 
     output$region_ui <- renderUI({
+      req(selected_data())
       selectInput("selected_regions", "Select Regions:",
                   choices = unique(selected_data()$region),
                   selected = unique(selected_data()$region),
@@ -48,7 +56,8 @@ run_shiny_app <- function(results) {
     })
 
     output$jobPlot <- renderPlot({
-      filtered_data <- as.data.frame(selected_data())
+      req(selected_data())
+      filtered_data <- selected_data()
       if (!is.null(input$selected_scenarios)) {
         filtered_data <- filtered_data[filtered_data$scenario %in% input$selected_scenarios, ]
       }
@@ -71,4 +80,3 @@ run_shiny_app <- function(results) {
 
   shinyApp(ui = ui, server = server)
 }
-
