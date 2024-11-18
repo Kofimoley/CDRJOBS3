@@ -44,6 +44,11 @@ visualize_results <- function(data,
   # Scale the job metrics to millions
   data[[job_metric]] <- data[[job_metric]] / 1e6
 
+  # Ensure data is ordered by year for proper line plotting
+  if (type == "total_year") {
+    data <- data %>% arrange(scenario, region, year)
+  }
+
   # Define theme for all plots
   custom_theme <- theme(
     legend.position = "none",
