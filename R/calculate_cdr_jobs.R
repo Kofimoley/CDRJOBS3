@@ -14,10 +14,10 @@
 #' @import dplyr rgcam ggplot2
 #' @export
 calculate_cdr_jobs <- function(db_path, db_name, dat_file, scenario_list, region_list = NULL, output_path, output_type = c("csv", "list"), create_plots = TRUE) {
-  # Load necessary libraries
-  library(dplyr)
-  library(rgcam)
-  library(ggplot2)
+  # Load necessary packages (use @import instead of library calls in the function)
+  # library(dplyr)
+  # library(rgcam)
+  # library(ggplot2)
 
   # Validate output_type
   output_type <- match.arg(output_type, several.ok = TRUE)
@@ -54,8 +54,8 @@ calculate_cdr_jobs <- function(db_path, db_name, dat_file, scenario_list, region
     CDR_Output <- CDR_Output %>% filter(region %in% region_list)
   }
 
-  # This ensures that CDR_Job_Inten is loaded directly from the package without any binding conflicts.
-  data("CDR_Job_Inten")
+  # Load the CDR_Job_Inten dataset directly from the package
+  data("CDR_Job_Inten", package = "CDRJOBS3")
 
   # Helper function to calculate job estimates
   calculate_jobs <- function(data) {
